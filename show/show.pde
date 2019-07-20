@@ -11,10 +11,12 @@ PeasyCam cam;
 
 ArrayList<Light> lights;
 
-
 void setup() {
-  size(800, 600, P3D);
+  String portName = Serial.list()[3];
+  printArray(Serial.list());
+  serial = new Serial(this, portName, 9600);
 
+  size(800, 600, P3D);
 
   cam = new PeasyCam(this, 400);
 
@@ -41,8 +43,13 @@ void draw() {
 
 
   if (random(1) < 0.1) {
-    Light l = lights.get(int(random(lights.size())));
-    l.on(random(2));
+    int lightId = int(random(lights.size()));
+    Light l = lights.get(lightId);
+    int lightOn = int(random(2));
+    l.on(lightOn);
+    if (lightOn == 1) {
+      sendSerialMessage('b', 300, lightId);
+    }
   }
 }
 
@@ -54,4 +61,12 @@ void initLights() {
   lights.add(new Light(0, 0, 0, 0, 0, 100));
 }
 
-//void sendSerial
+int sleepMessage = 15;
+char type = 'a';
+int time = 90;
+
+void sendSerialMessage(char type, int duration, int id) {
+  println(type+" "+duration+" "+id);
+  serial.write(type+","+duration+","+id+";");
+  delay(sleepMessage); // wait for serial
+}

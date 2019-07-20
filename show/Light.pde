@@ -27,13 +27,3 @@ class Light {
     this.time = time;
   }
 }
-
-int sleepMessage = 15;
-char type = 'a';
-int time = 90;
-
-void sendSerialMessage(char type, int duration, int id) {
-  println(type+" "+duration+" "+id);
-  serial.write(type+","+duration+","+id+";");
-  delay(sleepMessage); // wait for serial
-} 
