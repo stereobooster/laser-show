@@ -4,25 +4,44 @@ import java.io.*;
 
 import peasy.PeasyCam;
 
-Serial serial;
+//import ddf.minim.*;
+//import ddf.minim.ugens.*;
 
+//Minim       minim;
+//AudioOutput out;
+
+//Sampler sounds[];
+
+
+Serial serial;
 PeasyCam cam;
 
 
 ArrayList<Light> lights;
 
+
+
 void setup() {
-  String portName = Serial.list()[3];
+  String portName = Serial.list()[0];
   printArray(Serial.list());
   serial = new Serial(this, portName, 9600);
 
   size(800, 600, P3D);
+  frameRate(60);
+
+//  minim = new Minim(this);
+//  out   = minim.getLineOut();
+
+//  sounds = new Sampler[3];
+
+//  for (int i = 0; i < 3; i++) {
+//    sounds[i] = new Sampler( "sample"+nf(i+1, 2)+".wav", 4, minim );
+//    sounds[i].patch( out );
+//  }
 
   cam = new PeasyCam(this, 400);
 
   lights = new ArrayList<Light>();
-
-
   initLights();
 }
 
@@ -39,34 +58,41 @@ void draw() {
     Light l = lights.get(i);
     l.update();
     l.show();
+
+    if (frameCount%120 < 60) l.on(100);
+    else l.off();
   }
 
+  /*
+  if (random(1) < 1.2) {
+   int lightId = int(random(lights.size()));
+   Light l = lights.get(lightId);
+   int lightOn = int(random(2));
+   l.on(lightOn);
+   
+   if (lightOn == 1) {
+   sendSerialMessage('b', 800, lightId);
+   }
+   
+   sounds[0].trigger();
+   }
+   */
+}
 
-  if (random(1) < 0.1) {
-    int lightId = int(random(lights.size()));
-    Light l = lights.get(lightId);
-    int lightOn = int(random(2));
-    l.on(lightOn);
-    if (lightOn == 1) {
-      sendSerialMessage('b', 300, lightId);
-    }
+void onLight(int lightId, int time) {
+  Light l = lights.get(lightId);
+  int lightOn = int(random(2));
+  l.on(lightOn);
+
+  if (lightOn == 1) {
+    sendSerialMessage('b', time, lightId);
   }
+
+  //sounds[0].trigger();
 }
 
 void initLights() {
-  lights.add(new Light(0, 0, 0, -100, -100, 0));
-  lights.add(new Light(0, 0, 0, +100, -100, 0));
-  lights.add(new Light(0, 0, 0, +100, +100, 0));
-  lights.add(new Light(0, 0, 0, -100, +100, 0));
-  lights.add(new Light(0, 0, 0, 0, 0, 100));
-}
-
-int sleepMessage = 15;
-char type = 'a';
-int time = 90;
-
-void sendSerialMessage(char type, int duration, int id) {
-  println(type+" "+duration+" "+id);
-  serial.write(type+","+duration+","+id+";");
-  delay(sleepMessage); // wait for serial
+  for (int i = 0; i < 9; i++) {
+    lights.add(new Light(i, i*30, 0, 0, i*30, -100, 0));
+  }
 }
