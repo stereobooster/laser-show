@@ -32,7 +32,8 @@ class Light {
     this.time = time;
     if (on) return;
     on = true;
-    sendSerialMessage('b', 100000, id);
+    sendSerialMessage('b', 10000, id);
+    //sendSerialMessage('a', 5, id);
   }
 
   void off() {
@@ -45,5 +46,5 @@ class Light {
 void sendSerialMessage(char type, int duration, int id) {
   println(type+" "+duration+" "+id);
   serial.write(type+","+duration+","+id+";");
-  delay(20); // wait for serial
+  delay(5); // wait for serial
 }

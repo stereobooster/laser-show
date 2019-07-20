@@ -22,22 +22,22 @@ ArrayList<Light> lights;
 
 
 void setup() {
-  String portName = Serial.list()[0];
+  String portName = Serial.list()[3];
   printArray(Serial.list());
   serial = new Serial(this, portName, 9600);
 
   size(800, 600, P3D);
   frameRate(60);
 
-//  minim = new Minim(this);
-//  out   = minim.getLineOut();
+  //  minim = new Minim(this);
+  //  out   = minim.getLineOut();
 
-//  sounds = new Sampler[3];
+  //  sounds = new Sampler[3];
 
-//  for (int i = 0; i < 3; i++) {
-//    sounds[i] = new Sampler( "sample"+nf(i+1, 2)+".wav", 4, minim );
-//    sounds[i].patch( out );
-//  }
+  //  for (int i = 0; i < 3; i++) {
+  //    sounds[i] = new Sampler( "sample"+nf(i+1, 2)+".wav", 4, minim );
+  //    sounds[i].patch( out );
+  //  }
 
   cam = new PeasyCam(this, 400);
 
@@ -54,12 +54,15 @@ void draw() {
   stroke(255);
   rect(-200, -200, 400, 400);
 
+  float time = millis()*0.001;
   for (int i = 0; i < lights.size(); i++) {
     Light l = lights.get(i);
     l.update();
     l.show();
 
-    if (frameCount%120 < 60) l.on(100);
+    //color(random(255), random(255), random(255));
+
+    if (cos(time*(2+i*0.1)) < 0.5) l.on(100);
     else l.off();
   }
 
@@ -93,6 +96,7 @@ void onLight(int lightId, int time) {
 
 void initLights() {
   for (int i = 0; i < 9; i++) {
-    lights.add(new Light(i, i*30, 0, 0, i*30, -100, 0));
+    float y = i*30-4.5*30;
+    lights.add(new Light(0, y, 0, 0, y, -100, 0));
   }
 }
